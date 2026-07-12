@@ -21,6 +21,9 @@ services:
     container_name: wheretf-backend
     ports:
       - "8000:8000"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     depends_on:
       db:
         condition: service_healthy
@@ -29,5 +32,16 @@ services:
     volumes:
       - .:/app 
 
-volumes:  
+# Added Ollama For Query Expansion
+  ollama:
+    image: ollama/ollama:latest
+    container_name: wheretf-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+volumes:
   postgres_data:
+  ollama_data:
