@@ -17,6 +17,9 @@ class File(Base):
     
     last_modified: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     indexed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+    state: Mapped[str] = mapped_column(String(20),nullable=False,server_default="scheduled")  # New column to track the state of the file
     
     tags: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default='{}')
     

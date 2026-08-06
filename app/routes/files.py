@@ -18,22 +18,7 @@ class FileUpdatePayload(BaseModel):
     context: Optional[str] = None
 
 # 1. THE DASHBOARD: Get all files
-@router.get("/")
-def get_all_files(db: Session = Depends(get_db)):
-    """Returns a list of all indexed files for the frontend UI."""
-    files = db.execute(select(File)).scalars().all()
-    
-    return [
-        {
-            "id": str(f.id),
-            "file_path": f.file_path,
-            "mime_type": f.mime_type,
-            "tags": f.tags,
-            "context": f.context,
-            "last_modified": f.last_modified
-        }
-        for f in files
-    ]
+f
 
 # 2. THE METADATA MANAGER: Update tags and context
 @router.patch("/{file_id}")
