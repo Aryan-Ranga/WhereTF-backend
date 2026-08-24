@@ -59,5 +59,6 @@ test_data/
 # ======================
 temp/
 /sample
-/watched_files/
+/watched_files/*
+!/watched_files/.gitkeep
 alembic/env.py
