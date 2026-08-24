@@ -31,11 +31,13 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://postgres:postgres@db:5432/wheretf
       REDIS_URL: redis://redis:6379/0
-      # Tells the sentence-transformers library where to cache the Jina CLIP model
       HF_HOME: /root/.cache/huggingface
+      WATCH_ROOT: /watched_f
     volumes:
       - .:/app
       - hf_cache:/root/.cache/huggingface
+      - ./watched_files:/watched_f
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
@@ -52,10 +54,12 @@ services:
     volumes:
       - .:/app
       - hf_cache:/root/.cache/huggingface
+      - ./watched_files:/watched_f
     environment:
       DATABASE_URL: postgresql+psycopg://postgres:postgres@db:5432/wheretf
       REDIS_URL: redis://redis:6379/0
       HF_HOME: /root/.cache/huggingface
+      WATCH_ROOT: /watched_f
     depends_on:
       db:
         condition: service_healthy

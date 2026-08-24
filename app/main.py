@@ -6,22 +6,37 @@ from app.routes import search
 from app.routes import upload
 from app.routes import files 
 from app.routes import watch
-from app.processing.cache import ModelCache  # <-- Import the cache
+from app.processing.cache import ModelCache
+from app.utils.watchdog_manager import watchdog_manager
 
 logger = logging.getLogger(__name__)
 
-# --- THE PRE-WARMER ---
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info(" Server booting up. Pre-loading AI models into RAM...")
+    # 1. Pre-load AI models
+    logger.info("Server booting up. Pre-loading AI models into RAM...")
     ModelCache.get_encoder()
     ModelCache.get_ocr_reader()
-    logger.info(" Models loaded successfully. Ready for instant bulk ingestion.")
-    
-    yield  # The server handles actual user requests here
-    
-    logger.info("Shutting down server and clearing RAM.")
-# ----------------------
+    logger.info("Models loaded successfully.")
+
+    # 2. Start watchdog
+    logger.info("Starting watchdog...")
+    try:
+        watchdog_manager.start()
+    except Exception as e:
+        logger.error(f"Watchdog failed to start: {e}")
+        # Non-fatal — server continues without watchdog
+
+    yield
+
+    # 3. Stop watchdog
+    logger.info("Shutting down...")
+    try:
+        watchdog_manager.stop()
+    except Exception as e:
+        logger.error(f"Watchdog failed to stop cleanly: {e}")
+
+    logger.info("Shutdown complete.")
 
 app = FastAPI(
     title="WhereTF Backend",

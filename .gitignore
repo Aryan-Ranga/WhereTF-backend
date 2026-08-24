@@ -59,4 +59,5 @@ test_data/
 # ======================
 temp/
 /sample
+/watched_files/
 alembic/env.py
